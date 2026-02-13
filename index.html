@@ -69,6 +69,7 @@
   }
   .menu-btn:active { transform: scale(0.96); background: #f2f2f7; }
   
+  /* Large Button Style */
   .menu-btn.large { 
     grid-column: span 2; 
     background: #E5F1FF; 
@@ -78,7 +79,20 @@
     padding: 25px 35px;
   }
   
+  /* Bulk Test Button Style */
+  .menu-btn.bulk {
+    grid-column: span 2;
+    background: #FFF0F5; 
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+    padding: 25px 35px;
+    color: #D63384;
+  }
+  
   .menu-title { display: block; font-weight: 700; font-size: 17px; color: var(--primary); margin-bottom: 4px; }
+  .menu-btn.bulk .menu-title { color: #D63384; }
+
   .menu-desc { font-size: 12px; color: var(--text-sub); line-height: 1.3; }
 
   /* --- WEAK BOX --- */
@@ -151,10 +165,27 @@
   /* ヒントエリア */
   .hint-zone { text-align:center; margin-bottom:15px; min-height:40px; }
   
-  .option-btn { display: block; width: 100%; padding: 18px; margin-bottom: 12px; background: #ffffff; border: 1px solid #E5E5EA; border-radius: 16px; font-size: 16px; font-weight: 600; color: var(--text-main); text-align: left; box-shadow: 0 2px 5px rgba(0,0,0,0.03); transition: 0.1s; }
+  .option-btn { 
+    display: flex; /* 横並びレイアウト用 */
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; 
+    padding: 18px; 
+    margin-bottom: 12px; 
+    background: #ffffff; 
+    border: 1px solid #E5E5EA; 
+    border-radius: 16px; 
+    font-size: 16px; 
+    font-weight: 600; 
+    color: var(--text-main); 
+    text-align: left; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03); 
+    transition: 0.1s; 
+  }
   .option-btn:active { background: #f2f2f7; transform: scale(0.98); }
   .option-btn.correct { background: #E8FAEB; border-color: var(--correct); color: #1D8536; }
   .option-btn.wrong { background: #FFEBEA; border-color: var(--wrong); color: #C41C10; }
+  .option-btn:disabled { opacity: 1.0; pointer-events: none; } /* オパシティを1に戻して見やすく */
 
   /* Result List Layout */
   .result-list { margin-top: 20px; text-align: center; border-top: 1px solid #E5E5EA; }
@@ -230,6 +261,15 @@
         </div>
         <span style="font-size:30px;">🔍</span>
       </div>
+      
+      <div class="menu-btn bulk" onclick="startBulkTest(50)">
+        <div>
+          <span class="menu-title">📝 50問一括テスト</span>
+          <span class="menu-desc">50択形式・最後にまとめて採点</span>
+        </div>
+        <span style="font-size:30px;">💯</span>
+      </div>
+
       <div class="menu-btn" onclick="showLevels(10)">
         <span style="font-size:24px; margin-bottom:5px;">⚡️</span>
         <span class="menu-title">10問</span>
@@ -240,16 +280,15 @@
         <span class="menu-title">50問</span>
         <span class="menu-desc">じっくり</span>
       </div>
-      <div class="menu-btn" onclick="showConfusingModes()">
+      <div class="menu-btn" onclick="showConfusingOptions()">
         <span style="font-size:24px; margin-bottom:5px;">🌀</span>
-        <span class="menu-title">似ている単語</span>
+        <span class="menu-title">似た単語</span>
         <span class="menu-desc">con-, ex- 等</span>
       </div>
       <div class="menu-btn" onclick="showRandomModes()">
-        <span style="font-size:24px; margin-bottom:5px;">🎲</span>
+	<span style="font-size:24px; margin-bottom:5px;">🎲</span>
 	<span class="menu-title">ランダム</span>
-	<span class="menu-desc">990単語からランダム出題</span>
-
+	<span class="menu-desc">990単語から</span>
       </div>
     </div>
   </div>
@@ -319,8 +358,30 @@
         <div id="fb-correct" style="font-size:16px; font-weight:bold; color:var(--text-main);"></div>
         <div id="fb-hint" style="font-size:14px; color:var(--text-main); margin-top:8px;"></div>
       </div>
-      <button class="btn-action" onclick="nextQ()">次へ進む ➔</button>
+      
+      <button class="btn-action" onclick="nextQ()" style="width:100%;">次へ ➔</button>
     </div>
+
+    <div style="margin-top: 40px; text-align: left;">
+      <button id="prev-btn" class="btn-action secondary" onclick="prevQ()" style="display:none; width: auto; padding: 10px 20px;">
+        ← 前へ
+      </button>
+    </div>
+  </div>
+
+  <div id="bulk-test-screen" class="hidden content-padding">
+    <div class="home-header">
+      <button class="back-btn" onclick="goHome()">ホームへ</button>
+      <h1>50問一括テスト</h1>
+      <div id="bulk-score-area" style="display:none; margin-top:10px;">
+         <div style="font-size:60px; font-weight:900; color:var(--primary); line-height:1;" id="bulk-score-val">0 / 50</div>
+         <div style="font-weight:bold; margin-top:5px; color:var(--text-sub);" id="bulk-score-msg"></div>
+      </div>
+      <p class="subtitle" id="bulk-subtitle">全問回答後に採点します</p>
+    </div>
+    <div id="bulk-test-list" style="padding-bottom: 40px;"></div>
+    <button id="bulk-grade-btn" class="btn-action" onclick="finishBulkTest()" style="margin-top:10px; margin-bottom:50px;">採点する</button>
+    <button id="bulk-home-btn" class="btn-action secondary" onclick="goHome()" style="margin-top:10px; margin-bottom:50px; display:none;">ホームに戻る</button>
   </div>
 
   <div id="result-screen" class="hidden content-padding" style="text-align:center; padding-top:60px;">
@@ -391,6 +452,10 @@
 </div>
 
 <script>
+// =========================================================
+// ▼▼▼ 注意：ここに元の単語データを貼り付けてください ▼▼▼
+// =========================================================
+
 // --- DATA PART 1 (1-250) ---
 const dataPart1 = [
 {id:1,en:"product",jp:"製品",hint:"pro(前へ) + duct(導く) ⇒ 生み出されたもの"},
@@ -644,7 +709,7 @@ const dataPart1 = [
 {id:249,en:"press",jp:"押す",hint:"圧力をかける"},
 {id:250,en:"regular",jp:"定期的な",hint:"reg(定規)で測ったような ⇒ 規則正しい"},
 ];
-// --- END PART 1 ---
+// --- END PART 2 ---
 // --- DATA PART 2 (251-600) ---
 const dataPart2 = [
 {id:251,en:"seem",jp:"〜のように見える",hint:"seem to be"},
@@ -845,7 +910,7 @@ const dataPart2 = [
 {id:446,en:"update",jp:"更新する",hint:"up(最新) + date(日付)にする"},
 {id:447,en:"upstairs",jp:"上の階に",hint:"up(上へ) + stairs(階段)"},
 {id:448,en:"manner",jp:"態度",hint:"man(手)での扱い方 ⇒ 態度・作法"},
-{id:449,en:"consider",jp:"考える",hint:"con(よく) + sider(星を見る) ⇒ 熟考する"},
+{id:449,en:"consider",jp:"考える",hint:"con(よく) + sider(星を見る) ⇒熟考する"},
 {id:450,en:"executive",jp:"重役",hint:"execute(実行する)権限を持つ人"},
 {id:451,en:"means",jp:"手段",hint:"meaning(意味)とは別語"},
 {id:452,en:"regarding",jp:"〜に関する",hint:"regard(見る) + ing ⇒ 〜を見て"},
@@ -899,6 +964,7 @@ const dataPart2 = [
 {id:500,en:"maximum",jp:"最大の",hint:"max(最大)の"},
 ];
 // --- END PART 2 ---
+
 // --- DATA PART 3 (501-990) ---
 const dataPart3 = [
 {id:501,en:"aim",jp:"向ける",hint:"arm(武器)を向ける ⇒ 狙う"},
@@ -1394,6 +1460,10 @@ const dataPart3 = [
 ];
 // --- END PART 3 ---
 
+// =========================================================
+// ▲▲▲ データ貼り付けエリア ここまで ▲▲▲
+// =========================================================
+
 const rawData = [
   ...dataPart1,
   ...dataPart2,
@@ -1403,21 +1473,23 @@ const rawData = [
 rawData.sort((a, b) => a.id - b.id);
 
 // --- APP LOGIC ---
-const STORAGE_KEY = 'toeic_990_v11';
+const STORAGE_KEY = 'toeic_990_v15';
 const RESUME_KEY = 'toeic_990_resume_state';
 
 let weakIDs = [], currentQuestions = [], currentIndex = 0, score = 0, isWeakMode = false;
 let maskMode = 'none';
 let isHintHidden = false;
-let wrongAnswers = []; // Store incorrect attempts
+let wrongAnswers = []; 
+let userAnswers = [];
+let quizHistory = []; 
 
 function init() {
   loadWeakData();
   updateWeakUI();
   setupRangeOptions();
   setupScrollBehavior();
-  // Default range
-  document.getElementById('range-filter').value = "1-100";
+  const rf = document.getElementById('range-filter');
+  if(rf) rf.value = "1-100";
   applyFilters();
 }
 
@@ -1456,7 +1528,7 @@ function setupRangeOptions() {
 function setupScrollBehavior() {
   let lastScrollTop = 0;
   const stickyHeader = document.getElementById('sticky-header');
-  const stickyHeaderList = document.getElementById('sticky-header-list'); // 苦手リスト用
+  const stickyHeaderList = document.getElementById('sticky-header-list'); 
   let ticking = false;
   
   window.addEventListener('scroll', () => {
@@ -1465,11 +1537,9 @@ function setupScrollBehavior() {
         let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const offset = scrollTop > 60 && scrollTop > lastScrollTop ? '-120%' : '0';
         
-        // 単語帳画面
         if(!document.getElementById('search-screen').classList.contains('hidden')) {
            stickyHeader.style.transform = `translateY(${offset})`;
         }
-        // 苦手リスト画面
         else if(!document.getElementById('list-screen').classList.contains('hidden')) {
            stickyHeaderList.style.transform = `translateY(${offset})`;
         }
@@ -1484,7 +1554,7 @@ function setupScrollBehavior() {
 
 // Navigation
 function showScreen(id) {
-  ['home-screen', 'quiz-screen', 'result-screen', 'list-screen', 'search-screen'].forEach(s => {
+  ['home-screen', 'quiz-screen', 'result-screen', 'list-screen', 'search-screen', 'bulk-test-screen'].forEach(s => {
     document.getElementById(s).classList.add('hidden');
   });
   document.getElementById(id).classList.remove('hidden');
@@ -1519,13 +1589,11 @@ function setMaskMode(mode) {
   maskMode = mode;
   document.querySelectorAll('.mask-btn').forEach(b => b.classList.remove('active'));
   if(mode !== 'none') {
-    // Both screens might use mask buttons
     const btn = document.getElementById(`mask-${mode}`);
     if(btn) btn.classList.add('active');
     const btnWeak = document.getElementById(`mask-${mode}-weak`);
     if(btnWeak) btnWeak.classList.add('active');
   }
-  // Re-apply filters for active screen
   if(!document.getElementById('search-screen').classList.contains('hidden')) applyFilters();
   if(!document.getElementById('list-screen').classList.contains('hidden')) applyWeakFilters();
 }
@@ -1535,8 +1603,6 @@ function toggleMask(target) {
   else setMaskMode(target);
 }
 
-// Separate Mask Logic for Weak List to sync or separate?
-// Let's keep them somewhat synced or just reuse setMaskMode logic
 function toggleMaskWeak(target) {
   if(maskMode === target) setMaskMode('none');
   else setMaskMode(target);
@@ -1611,16 +1677,13 @@ function toggleReveal(el) {
 }
 
 function toggleWeak(id) {
-  // Update Data
   if(weakIDs.includes(id)) {
     weakIDs = weakIDs.filter(w => w !== id);
   } else {
-    // Add to end (Latest)
     if(!weakIDs.includes(id)) weakIDs.push(id);
   }
   saveWeakData();
 
-  // Update UI (Search Screen Button)
   const btn = document.getElementById(`wb-btn-${id}`);
   if(btn) {
     if(weakIDs.includes(id)) {
@@ -1632,7 +1695,6 @@ function toggleWeak(id) {
     }
   }
   
-  // If we are in Weak List screen, refresh list
   if(!document.getElementById('list-screen').classList.contains('hidden')) {
     applyWeakFilters();
   }
@@ -1643,29 +1705,20 @@ function showList() {
   if(!weakIDs.length) return alert("現在、苦手単語はありません。");
   showScreen('list-screen');
   document.getElementById('weak-sort-filter').value = "latest";
-  // Reset mask but apply if set
   setMaskMode('none');
   applyWeakFilters();
 }
 
 function applyWeakFilters() {
   const sortType = document.getElementById('weak-sort-filter').value;
-  // No search input anymore
-  
-  // Create list based on weakIDs
   let list = [];
-  
-  // Sort Logic
   let sortedIDs = [...weakIDs];
   if(sortType === 'latest') {
-    sortedIDs.reverse(); // Newest first
+    sortedIDs.reverse();
   } else {
-    sortedIDs.sort((a,b) => a - b); // ID order
+    sortedIDs.sort((a,b) => a - b);
   }
-  
-  // Map IDs to Objects
   list = sortedIDs.map(id => rawData.find(d => d.id === id)).filter(x => x);
-  
   renderWeakResults(list);
 }
 
@@ -1701,7 +1754,6 @@ function renderWeakResults(list) {
   });
 }
 
-// --- NEW MODAL LOGIC FOR COURSE SELECTION ---
 function showLevels(count) {
   document.getElementById('course-modal-title').innerText = `${count}問コースの範囲選択`;
   const container = document.getElementById('course-list');
@@ -1723,25 +1775,6 @@ function showLevels(count) {
     };
     container.appendChild(btn);
   }
-  
-  document.getElementById('course-modal').classList.remove('hidden');
-}
-
-function showConfusingModes() {
-  document.getElementById('course-modal-title').innerText = `似ている単語 (con-, pre- 等)`;
-  const container = document.getElementById('course-list');
-  container.innerHTML = "";
-  
-  [10, 20, 30].forEach(num => {
-    const btn = document.createElement('button');
-    btn.className = 'course-btn';
-    btn.innerText = `${num}問`;
-    btn.onclick = () => {
-        closeCourseModal();
-        setTimeout(() => startConfusingQuiz(num), 200);
-    };
-    container.appendChild(btn);
-  });
   
   document.getElementById('course-modal').classList.remove('hidden');
 }
@@ -1777,16 +1810,45 @@ function closeCourseModal(e) {
   }, 180);
 }
 
-// CONFUSING WORDS QUIZ
-function startConfusingQuiz(count) {
-  const prefixes = ['con', 'com', 'ex', 'pre', 'pro', 're', 'de', 'in', 'im', 'sub', 'trans', 'dis'];
-  let pool = rawData.filter(d => {
-    return prefixes.some(p => d.en.startsWith(p));
+// --- SORTED CONFUSING OPTIONS ---
+function showConfusingOptions() {
+  document.getElementById('course-modal-title').innerText = "接頭辞で選ぶ";
+  const container = document.getElementById('course-list');
+  container.innerHTML = "";
+  
+  const prefixes = ['con', 'com', 'ex', 'pre', 'pro', 're', 'de', 'in', 'im', 'sub', 'trans', 'dis', 'un'];
+  
+  let prefixData = prefixes.map(p => {
+    const count = rawData.filter(d => d.en.startsWith(p)).length;
+    return { prefix: p, count: count };
   });
-  if(pool.length < count) return alert(`データ不足です (該当: ${pool.length}語)`);
+
+  prefixData.sort((a, b) => b.count - a.count);
+
+  prefixData.forEach(item => {
+    if(item.count > 0) {
+        const btn = document.createElement('button');
+        btn.className = 'course-btn';
+        const label = `${item.prefix}- コース`;
+        btn.innerHTML = `<span style="font-size:18px; font-weight:bold;">${item.prefix}-</span> <span style="font-size:12px;">(${item.count}語)</span>`;
+        btn.onclick = () => {
+            closeCourseModal();
+            // ★変更点：ここでもcheckResumeを呼ぶように変更
+            setTimeout(() => checkResume(0, 0, 0, label, item.prefix), 200);
+        };
+        container.appendChild(btn);
+    }
+  });
+  
+  document.getElementById('course-modal').classList.remove('hidden');
+}
+
+function startPrefixQuiz(prefix, label) {
+  let pool = rawData.filter(d => d.en.startsWith(prefix));
   pool.sort(() => Math.random() - 0.5);
-  currentQuestions = pool.slice(0, count);
-  startQuizSequence('confusing');
+  const qCount = Math.min(pool.length, 20);
+  currentQuestions = pool.slice(0, qCount);
+  startQuizSequence('confusing', label);
 }
 
 function startRandomQuiz(count) {
@@ -1799,27 +1861,28 @@ function startRandomQuiz(count) {
 function startWeakMode() {
   if(!weakIDs.length) return alert("苦手単語はありません！");
   isWeakMode = true;
-  // Use current weakIDs order? Usually for quiz, random is better.
   let pool = rawData.filter(d => weakIDs.includes(d.id));
   pool.sort(() => Math.random() - 0.5);
   currentQuestions = pool;
   startQuizSequence('weak');
 }
 
-// RESUME LOGIC
+// RESUME LOGIC (Updated for prefix support)
 let pendingQuizData = null;
 
-function checkResume(start, end, count, label) {
+function checkResume(start, end, count, label, prefix = null) {
   const savedState = localStorage.getItem(RESUME_KEY);
   if(savedState) {
     const state = JSON.parse(savedState);
-    if(state.label === label && state.mode === 'range') {
-      pendingQuizData = { state, start, end, count, label };
+    if(state.label === label) {
+      pendingQuizData = { state, start, end, count, label, prefix };
       document.getElementById('resume-modal').classList.remove('hidden');
       return;
     }
   }
-  startNewQuiz(start, end, count, label);
+  // No resume, start new
+  if(prefix) startPrefixQuiz(prefix, label);
+  else startNewQuiz(start, end, count, label);
 }
 
 function confirmResume() {
@@ -1829,6 +1892,7 @@ function confirmResume() {
   currentIndex = s.index;
   score = s.score;
   wrongAnswers = s.wrong;
+  quizHistory = s.history || []; 
   isWeakMode = false;
   showScreen('quiz-screen');
   showQuestion();
@@ -1837,7 +1901,11 @@ function confirmResume() {
 function cancelResume() {
   document.getElementById('resume-modal').classList.add('hidden');
   localStorage.removeItem(RESUME_KEY);
-  startNewQuiz(pendingQuizData.start, pendingQuizData.end, pendingQuizData.count, pendingQuizData.label);
+  if(pendingQuizData.prefix) {
+      startPrefixQuiz(pendingQuizData.prefix, pendingQuizData.label);
+  } else {
+      startNewQuiz(pendingQuizData.start, pendingQuizData.end, pendingQuizData.count, pendingQuizData.label);
+  }
 }
 
 function startNewQuiz(start, end, count, label) {
@@ -1852,14 +1920,23 @@ function startQuizSequence(mode, label = null) {
   currentIndex = 0;
   score = 0;
   wrongAnswers = [];
+  quizHistory = []; // 履歴リセット
   localStorage.removeItem(RESUME_KEY);
   currentQuestions.forEach(q => q._mode = mode); 
-  if(mode === 'range') currentQuestions._label = label;
+  if(label) currentQuestions._label = label;
   showScreen('quiz-screen');
   showQuestion();
 }
 
-function showQuestion() {
+// --- QUIZ LOGIC WITH REVIEW ---
+function prevQ() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    showQuestion(true);
+  }
+}
+
+function showQuestion(isReview = false) {
   const q = currentQuestions[currentIndex];
   document.getElementById('progress').innerText = `${currentIndex + 1} / ${currentQuestions.length}`;
   document.getElementById('q-id').innerText = `No.${q.id}`;
@@ -1868,9 +1945,20 @@ function showQuestion() {
   document.getElementById('hint-content').style.display = 'none';
   document.getElementById('hint-content').innerText = q.hint;
   document.getElementById('hint-btn').style.display = 'inline-block';
+  
   document.getElementById('feedback').style.display = 'none';
   document.getElementById('options').innerHTML = "";
   
+  const prevBtn = document.getElementById('prev-btn');
+  if (prevBtn) {
+    prevBtn.style.display = currentIndex > 0 ? 'inline-block' : 'none';
+  }
+
+  if(quizHistory[currentIndex]) {
+    restoreResult(quizHistory[currentIndex]);
+    return;
+  }
+
   let distractors = rawData.filter(d => d.id !== q.id);
   let similar = distractors.filter(d => d.en[0] === q.en[0]);
   if(similar.length > 3) distractors = similar;
@@ -1885,22 +1973,53 @@ function showQuestion() {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
     btn.innerText = o.jp;
-    btn.dataset.en = o.en; // Store English word
     btn.onclick = () => checkAnswer(o, q);
     optContainer.appendChild(btn);
   });
 
   if(currentQuestions._label) {
-    const state = {
-      mode: 'range',
-      label: currentQuestions._label,
-      questions: currentQuestions,
-      index: currentIndex,
-      score: score,
-      wrong: wrongAnswers
-    };
-    localStorage.setItem(RESUME_KEY, JSON.stringify(state));
+    saveQuizState();
   }
+}
+
+function restoreResult(historyData) {
+  const optContainer = document.getElementById('options');
+  historyData.options.forEach(o => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    
+    if(o.id === historyData.correctId) btn.classList.add('correct');
+    if(historyData.selectedId === o.id && o.id !== historyData.correctId) btn.classList.add('wrong');
+    
+    // ★ここを変更：横並び＆シンプル表示
+    let originalWord = "";
+    const wData = rawData.find(d => d.id === o.id);
+    if(wData) originalWord = wData.en;
+    
+    btn.innerHTML = `<span>${o.jp}</span> <span style="font-size:14px; opacity:0.6; font-weight:normal;">${originalWord}</span>`;
+    
+    btn.disabled = true; 
+    optContainer.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  const fbMsg = document.getElementById('fb-msg');
+  const correct = rawData.find(d => d.id === historyData.correctId);
+  
+  if(historyData.isCorrect) {
+    fbMsg.innerText = "正解! 🎉 (回答済み)";
+    fbMsg.style.color = "var(--correct)";
+  } else {
+    fbMsg.innerText = "不正解... 😢 (回答済み)";
+    fbMsg.style.color = "var(--wrong)";
+  }
+  
+  document.getElementById('fb-correct').innerText = `${correct.en} : ${correct.jp}`;
+  document.getElementById('fb-hint').innerText = correct.hint;
+  fb.style.display = 'block';
+  
+  document.getElementById('hint-content').style.display = 'block';
+  document.getElementById('hint-btn').style.display = 'none';
 }
 
 function speakCurrentQ() {
@@ -1915,25 +2034,31 @@ function toggleHint() {
 }
 
 function checkAnswer(selected, correct) {
-  const opts = document.getElementById('options').children;
+  const opts = Array.from(document.getElementById('options').children);
+  const optData = opts.map(btn => {
+     const found = rawData.find(d => d.jp === btn.innerText);
+     return found ? {jp: found.jp, id: found.id} : {jp: btn.innerText, id: -1};
+  });
+  
+  quizHistory[currentIndex] = {
+    selectedId: selected.id,
+    correctId: correct.id,
+    isCorrect: selected.id === correct.id,
+    options: optData
+  };
+
   for(let btn of opts) {
     btn.disabled = true;
-    const isCorrectBtn = (btn.innerText === correct.jp);
-    const isSelectedWrongBtn = (btn.innerText === selected.jp && selected.id !== correct.id);
-
-    if(isCorrectBtn) btn.classList.add('correct');
-    if(isSelectedWrongBtn) btn.classList.add('wrong');
     
-    // Reveal English word horizontally
-    const jpText = btn.innerText;
-    const enWord = btn.dataset.en;
+    const wData = rawData.find(d => d.jp === btn.innerText);
+    let enText = "";
+    if(wData) enText = wData.en;
     
-    btn.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-        <span style="text-align:left; flex:1; margin-right:10px;">${jpText}</span>
-        <span style="font-size:15px; font-weight:600; color:#555;">${enWord}</span>
-      </div>
-    `;
+    if(btn.innerText === correct.jp) btn.classList.add('correct');
+    if(btn.innerText === selected.jp && selected.id !== correct.id) btn.classList.add('wrong');
+    
+    // ★ここを変更：横並び＆シンプル表示
+    btn.innerHTML = `<span>${btn.innerText}</span> <span style="font-size:16px; opacity:0.8; font-weight:normal;">${enText}</span>`;
   }
 
   const fb = document.getElementById('feedback');
@@ -1954,6 +2079,20 @@ function checkAnswer(selected, correct) {
   document.getElementById('fb-correct').innerText = `${correct.en} : ${correct.jp}`;
   document.getElementById('fb-hint').innerText = correct.hint;
   fb.style.display = 'block';
+  
+  if(currentQuestions._label) saveQuizState();
+}
+
+function saveQuizState() {
+  const state = {
+      label: currentQuestions._label,
+      questions: currentQuestions,
+      index: currentIndex,
+      score: score,
+      wrong: wrongAnswers,
+      history: quizHistory
+    };
+  localStorage.setItem(RESUME_KEY, JSON.stringify(state));
 }
 
 function nextQ() {
@@ -1964,6 +2103,99 @@ function nextQ() {
     localStorage.removeItem(RESUME_KEY);
     showResult();
   }
+}
+
+// --- BULK TEST LOGIC ---
+
+function startBulkTest(count) {
+  let pool = [...rawData];
+  pool.sort(() => Math.random() - 0.5);
+  currentQuestions = pool.slice(0, count);
+  userAnswers = new Array(count).fill(null);
+  
+  document.getElementById('bulk-score-area').style.display = 'none';
+  document.getElementById('bulk-subtitle').style.display = 'block';
+  document.getElementById('bulk-grade-btn').style.display = 'block';
+  document.getElementById('bulk-home-btn').style.display = 'none';
+  
+  showScreen('bulk-test-screen');
+  renderBulkTest();
+}
+
+function renderBulkTest() {
+  const con = document.getElementById('bulk-test-list');
+  con.innerHTML = "";
+  
+  const allJpOptions = currentQuestions.map(q => q.jp).sort(() => Math.random() - 0.5);
+
+  currentQuestions.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.style = "margin-bottom:30px; padding:15px; border-bottom:1px solid #eee;";
+    div.innerHTML = `
+      <div style="font-size:14px; color:var(--text-sub); font-weight:bold; margin-bottom:5px;">Q${idx+1}. (No.${q.id})</div>
+      <div style="font-size:24px; font-weight:800; margin-bottom:15px; color:var(--text-main);">${q.en}</div>
+      
+      <select id="bulk-select-${idx}" onchange="recordBulkAnswer(${idx}, this.value)" style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--border); font-size:16px; background:#fff; appearance:none;">
+        <option value="">選択してください</option>
+        ${allJpOptions.map(jp => `<option value="${jp}">${jp}</option>`).join('')}
+      </select>
+      <div id="bulk-result-${idx}" style="margin-top:10px; font-weight:bold; display:none;"></div>
+    `;
+    con.appendChild(div);
+  });
+}
+
+function recordBulkAnswer(idx, value) {
+  userAnswers[idx] = value;
+}
+
+function finishBulkTest() {
+  score = 0;
+  wrongAnswers = [];
+
+  currentQuestions.forEach((q, idx) => {
+    const userAns = userAnswers[idx];
+    const resDiv = document.getElementById(`bulk-result-${idx}`);
+    const select = document.getElementById(`bulk-select-${idx}`);
+    
+    select.disabled = true;
+    resDiv.style.display = 'block';
+    
+    // ★変更点：文字サイズを大きく
+    if (userAns === q.jp) {
+      score++;
+      resDiv.innerHTML = `<span style="color:var(--correct); font-size:22px; font-weight:900;">正解！⭕️</span>`;
+      select.style.border = "2px solid var(--correct)";
+      select.style.background = "#E8FAEB";
+    } else {
+      wrongAnswers.push(q);
+      if(!weakIDs.includes(q.id)) toggleWeak(q.id);
+      resDiv.innerHTML = `
+        <span style="color:var(--wrong); font-size:16px; font-weight:900;">不正解... ❌</span><br>
+        <span style="font-size:17px; color:var(--text-main); font-weight:bold;">正解: ${q.jp}</span>
+        <div style="font-size:14px; color:var(--text-sub); margin-top:6px;">${q.hint}</div>
+      `;
+      select.style.border = "2px solid var(--wrong)";
+      select.style.background = "#FFEBEA";
+    }
+  });
+
+  document.getElementById('bulk-subtitle').style.display = 'none';
+  const scoreArea = document.getElementById('bulk-score-area');
+  scoreArea.style.display = 'block';
+  document.getElementById('bulk-score-val').innerText = `${score} / ${currentQuestions.length}`;
+  
+  let rate = score / currentQuestions.length;
+  let txt = "";
+  if(rate === 1) txt = "Perfect!! 素晴らしい！🏆";
+  else if(rate >= 0.8) txt = "Great Job! その調子！✨";
+  else txt = "復習して苦手をなくしましょう！";
+  document.getElementById('bulk-score-msg').innerText = txt;
+
+  document.getElementById('bulk-grade-btn').style.display = 'none';
+  document.getElementById('bulk-home-btn').style.display = 'block';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function showResult() {
