@@ -240,15 +240,16 @@
         <span class="menu-title">50問</span>
         <span class="menu-desc">じっくり</span>
       </div>
-      <div class="menu-btn" onclick="startConfusingQuiz()">
+      <div class="menu-btn" onclick="showConfusingModes()">
         <span style="font-size:24px; margin-bottom:5px;">🌀</span>
-        <span class="menu-title">似た単語</span>
+        <span class="menu-title">似ている単語</span>
         <span class="menu-desc">con-, ex- 等</span>
       </div>
       <div class="menu-btn" onclick="showRandomModes()">
-	<span style="font-size:24px; margin-bottom:5px;">🎲</span>
+        <span style="font-size:24px; margin-bottom:5px;">🎲</span>
 	<span class="menu-title">ランダム</span>
 	<span class="menu-desc">990単語からランダム出題</span>
+
       </div>
     </div>
   </div>
@@ -1402,7 +1403,7 @@ const rawData = [
 rawData.sort((a, b) => a.id - b.id);
 
 // --- APP LOGIC ---
-const STORAGE_KEY = 'toeic_990_v12';
+const STORAGE_KEY = 'toeic_990_v11';
 const RESUME_KEY = 'toeic_990_resume_state';
 
 let weakIDs = [], currentQuestions = [], currentIndex = 0, score = 0, isWeakMode = false;
@@ -1726,6 +1727,25 @@ function showLevels(count) {
   document.getElementById('course-modal').classList.remove('hidden');
 }
 
+function showConfusingModes() {
+  document.getElementById('course-modal-title').innerText = `似ている単語 (con-, pre- 等)`;
+  const container = document.getElementById('course-list');
+  container.innerHTML = "";
+  
+  [10, 20, 30].forEach(num => {
+    const btn = document.createElement('button');
+    btn.className = 'course-btn';
+    btn.innerText = `${num}問`;
+    btn.onclick = () => {
+        closeCourseModal();
+        setTimeout(() => startConfusingQuiz(num), 200);
+    };
+    container.appendChild(btn);
+  });
+  
+  document.getElementById('course-modal').classList.remove('hidden');
+}
+
 function showRandomModes() {
   document.getElementById('course-modal-title').innerText = `ランダム出題 (全990語)`;
   const container = document.getElementById('course-list');
@@ -1758,14 +1778,14 @@ function closeCourseModal(e) {
 }
 
 // CONFUSING WORDS QUIZ
-function startConfusingQuiz() {
+function startConfusingQuiz(count) {
   const prefixes = ['con', 'com', 'ex', 'pre', 'pro', 're', 'de', 'in', 'im', 'sub', 'trans', 'dis'];
   let pool = rawData.filter(d => {
     return prefixes.some(p => d.en.startsWith(p));
   });
-  if(pool.length < 10) return alert("データ不足です");
+  if(pool.length < count) return alert(`データ不足です (該当: ${pool.length}語)`);
   pool.sort(() => Math.random() - 0.5);
-  currentQuestions = pool.slice(0, 20);
+  currentQuestions = pool.slice(0, count);
   startQuizSequence('confusing');
 }
 
@@ -1865,6 +1885,7 @@ function showQuestion() {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
     btn.innerText = o.jp;
+    btn.dataset.en = o.en; // Store English word
     btn.onclick = () => checkAnswer(o, q);
     optContainer.appendChild(btn);
   });
@@ -1897,8 +1918,22 @@ function checkAnswer(selected, correct) {
   const opts = document.getElementById('options').children;
   for(let btn of opts) {
     btn.disabled = true;
-    if(btn.innerText === correct.jp) btn.classList.add('correct');
-    if(btn.innerText === selected.jp && selected.id !== correct.id) btn.classList.add('wrong');
+    const isCorrectBtn = (btn.innerText === correct.jp);
+    const isSelectedWrongBtn = (btn.innerText === selected.jp && selected.id !== correct.id);
+
+    if(isCorrectBtn) btn.classList.add('correct');
+    if(isSelectedWrongBtn) btn.classList.add('wrong');
+    
+    // Reveal English word horizontally
+    const jpText = btn.innerText;
+    const enWord = btn.dataset.en;
+    
+    btn.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+        <span style="text-align:left; flex:1; margin-right:10px;">${jpText}</span>
+        <span style="font-size:15px; font-weight:600; color:#555;">${enWord}</span>
+      </div>
+    `;
   }
 
   const fb = document.getElementById('feedback');
@@ -1968,6 +2003,4 @@ function showResult() {
 window.onload = init;
 </script>
 </body>
-
 </html>
-
