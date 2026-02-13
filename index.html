@@ -2164,7 +2164,8 @@ function finishBulkTest() {
     // ★変更点：文字サイズを大きく
     if (userAns === q.jp) {
       score++;
-      resDiv.innerHTML = `<span style="color:var(--correct); font-size:22px; font-weight:900;">正解！⭕️</span>`;
+      resDiv.innerHTML = `<span style="color:var(--correct); font-size:16px; font-weight:900;">正解！⭕️</span>`;
+						  <div style="font-size:14px; color:var(--text-sub); margin-top:6px;">${q.hint}</div>
       select.style.border = "2px solid var(--correct)";
       select.style.background = "#E8FAEB";
     } else {
@@ -2236,4 +2237,5 @@ window.onload = init;
 </script>
 </body>
 </html>
+
 
