@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>TOEIC単語990</title>
 <style>
+  /* 基本スタイル */
   :root {
     --primary: #007AFF;
     --primary-bg: #F2F2F7;
@@ -49,6 +50,11 @@
   .content-padding {
     padding: 20px 20px calc(80px + var(--safe-bottom)) 20px;
   }
+  
+  /* クイズ画面の下部余白を個別に縮小 */
+  #quiz-screen.content-padding {
+    padding-bottom: calc(20px + var(--safe-bottom)) !important;
+  }
 
   /* --- HEADER --- */
   .home-header {
@@ -69,7 +75,6 @@
   }
   .menu-btn:active { transform: scale(0.96); background: #f2f2f7; }
   
-  /* Large Button Style */
   .menu-btn.large { 
     grid-column: span 2; 
     background: #E5F1FF; 
@@ -79,7 +84,6 @@
     padding: 25px 35px;
   }
   
-  /* Bulk Test Button Style */
   .menu-btn.bulk {
     grid-column: span 2;
     background: #FFF0F5; 
@@ -127,7 +131,6 @@
   .mask-controls { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
   .mask-controls::-webkit-scrollbar { display: none; }
   .mask-btn { flex: 1; white-space: nowrap; padding: 8px 12px; font-size: 13px; font-weight: 600; border-radius: 16px; background: #F2F2F7; color: var(--text-main); border: none; transition: 0.2s; min-height: 36px; }
-  /* ボタンのトグル状態 */
   .mask-btn.active { background: var(--text-main); color: white; }
   .mask-btn.hint-toggle-btn.active { background: var(--accent); color: white; }
 
@@ -152,7 +155,7 @@
   .is-weak { background: #E8FAEA; color: #1D8536; border: 1px solid #C3E6CB; }
   .is-not-weak { background: #FFF0F0; color: #FF3B30; border: 1px solid #FFD1D1; }
 
-  /* --- QUIZ LAYOUT (COMPACT) --- */
+  /* --- QUIZ LAYOUT --- */
   .quiz-container { padding-top: 5px; }
   .quiz-card { text-align: center; margin-top: 0; }
   
@@ -162,11 +165,10 @@
   
   .word-text { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 0; color: var(--text-main); }
   
-  /* ヒントエリア */
   .hint-zone { text-align:center; margin-bottom:15px; min-height:40px; }
   
   .option-btn { 
-    display: flex; /* 横並びレイアウト用 */
+    display: flex; 
     justify-content: space-between;
     align-items: center;
     width: 100%; 
@@ -185,7 +187,7 @@
   .option-btn:active { background: #f2f2f7; transform: scale(0.98); }
   .option-btn.correct { background: #E8FAEB; border-color: var(--correct); color: #1D8536; }
   .option-btn.wrong { background: #FFEBEA; border-color: var(--wrong); color: #C41C10; }
-  .option-btn:disabled { opacity: 1.0; pointer-events: none; } /* オパシティを1に戻して見やすく */
+  .option-btn:disabled { opacity: 1.0; pointer-events: none; }
 
   /* Result List Layout */
   .result-list { margin-top: 20px; text-align: center; border-top: 1px solid #E5E5EA; }
@@ -362,7 +364,7 @@
       <button class="btn-action" onclick="nextQ()" style="width:100%;">次へ ➔</button>
     </div>
 
-    <div style="margin-top: 40px; text-align: left;">
+    <div style="margin-top: 20px; text-align: left; padding-bottom: 0;">
       <button id="prev-btn" class="btn-action secondary" onclick="prevQ()" style="display:none; width: auto; padding: 10px 20px;">
         ← 前へ
       </button>
@@ -618,7 +620,7 @@ const dataPart1 = [
 {id:158,en:"take place",jp:"行われる",hint:"場所(place)を占める(take) ⇒ 開催される"},
 {id:159,en:"call off",jp:"中止する",hint:"大声で(call)離れる(off)よう言う"},
 {id:160,en:"according to",jp:"〜によると",hint:"accord(一致) + to ⇒ 〜に合わせて"},
-{id:161,en:"operates",jp:"運営する",hint:"opus(仕事)をする ⇒ 運営・操作する"},
+{id:161,en:"operate",jp:"運営する",hint:"opus(仕事)をする ⇒ 運営・操作する"},
 {id:162,en:"post",jp:"掲示する",hint:"ポスト(柱)に貼る"},
 {id:163,en:"present",jp:"見せる",hint:"プレゼント(目の前にある) ⇒ 提示する"},
 {id:164,en:"reason",jp:"理由",hint:"リーズナブル(理にかなった)の元"},
@@ -891,7 +893,7 @@ const dataPart2 = [
 {id:427,en:"economical",jp:"経済的な",hint:"eco(家) + nomy(管理) ⇒ 節約"},
 {id:428,en:"exchange",jp:"交換する",hint:"ex(外へ) + change(変える) ⇒ 交換"},
 {id:429,en:"expert",jp:"専門的",hint:"ex(外で) + per(試す) ⇒ 経験豊富な人"},
-{id:430,en:"extention",jp:"内線",hint:"ex(外へ) + tend(伸ばす) ⇒ 電話線を伸ばしたもの"},
+{id:430,en:"extension",jp:"内線",hint:"ex(外へ) + tend(伸ばす) ⇒ 電話線を伸ばしたもの"},
 {id:431,en:"familiar",jp:"よく知っている",hint:"family(家族)のように親しい"},
 {id:432,en:"host",jp:"主催する",hint:"guest(客)をもてなす主人"},
 {id:433,en:"ride",jp:"車に乗せること",hint:"馬に乗る(ride) ⇒ 車に乗る"},
@@ -982,7 +984,7 @@ const dataPart3 = [
 {id:513,en:"glance",jp:"さっと見る",hint:"チラッと見る"},
 {id:514,en:"ingredient",jp:"材料",hint:"in(中に) + gred(進む) ⇒ 中に入っているもの"},
 {id:515,en:"capable",jp:"能力がある",hint:"cap(つかむ) + able(できる) ⇒ 能力がある"},
-{id:516,en:"conclution",jp:"結論",hint:"conclude(結論づける)の名詞"},
+{id:516,en:"conclusion",jp:"結論",hint:"conclude(結論づける)の名詞"},
 {id:517,en:"emergency",jp:"緊急事態",hint:"emerge(現れる)こと ⇒ 突発事態"},
 {id:518,en:"load",jp:"積み込む",hint:"lead(導く)と同語源。旅の積荷"},
 {id:519,en:"punctual",jp:"時間を守る",hint:"point(点) ⇒ 時間の点を守る"},
@@ -1036,7 +1038,7 @@ const dataPart3 = [
 {id:567,en:"private",jp:"内密の",hint:"public(公)からpriv(奪う・分ける) ⇒ 私的な"},
 {id:568,en:"tip",jp:"ヒント",hint:"先端(tip) ⇒ 極秘情報 ⇒ ヒント"},
 {id:569,en:"agriculture",jp:"農業",hint:"agri(畑) + culture(耕す)"},
-{id:570,en:"railling",jp:"手すり",hint:"rail(レール) + ing"},
+{id:570,en:"railing",jp:"手すり",hint:"rail(レール) + ing"},
 {id:571,en:"theme",jp:"テーマ",hint:"提題(thesis)されたもの"},
 {id:572,en:"tie",jp:"つながり",hint:"ネクタイのタイ。結ぶもの"},
 {id:573,en:"fond",jp:"好ましい",hint:"be fond of (〜が好きだ)"},
@@ -1046,7 +1048,7 @@ const dataPart3 = [
 {id:577,en:"I wonder if you",jp:"〜していただけませんか",hint:"あなたが〜するか迷う ⇒ してくれませんか"},
 {id:578,en:"worth",jp:"〜の価値がある",hint:"worthy(価値ある)"},
 {id:579,en:"enroll",jp:"申し込む",hint:"roll(名簿)にin(入れる)"},
-{id:580,en:"envionment",jp:"環境",hint:"environmentの略"},
+{id:580,en:"environment",jp:"環境",hint:"en（中に）＋ viron（回転する）⇒中を取り囲む"},
 {id:581,en:"exactly",jp:"まったく",hint:"ex(外へ) + act(動かす) ⇒ 完了した ⇒ 正確な"},
 {id:582,en:"ideal",jp:"理想的な",hint:"idea(イデア・理想)の"},
 {id:583,en:"precisely",jp:"ちょうどに",hint:"precise(正確な) + ly"},
@@ -1191,7 +1193,7 @@ const dataPart3 = [
 {id:722,en:"essential",jp:"極めて重要な",hint:"essence(本質)の"},
 {id:723,en:"fluent",jp:"流暢な",hint:"flu(流れる)ような"},
 {id:724,en:"negotiation",jp:"交渉",hint:"ne(否定) + otium(暇) ⇒ 暇じゃない(仕事)"},
-{id:725,en:"ouccur",jp:"起こる",hint:"oc(〜へ) + cur(走る) ⇒ こちらへやって来る"},
+{id:725,en:"occur",jp:"起こる",hint:"oc(〜へ) + cur(走る) ⇒ こちらへやって来る"},
 {id:726,en:"workforce",jp:"労働人口",hint:"work(労働) + force(力・軍隊)"},
 {id:727,en:"stable",jp:"安定した",hint:"stand(立つ)できる ⇒ 安定"},
 {id:728,en:"aid",jp:"援助",hint:"First aid (応急処置)のaid"},
@@ -1460,6 +1462,7 @@ const dataPart3 = [
 ];
 // --- END PART 3 ---
 
+
 // =========================================================
 // ▲▲▲ データ貼り付けエリア ここまで ▲▲▲
 // =========================================================
@@ -1489,7 +1492,7 @@ function init() {
   setupRangeOptions();
   setupScrollBehavior();
   const rf = document.getElementById('range-filter');
-  if(rf) rf.value = "1-100";
+  if(rf) rf.value = "all";
   applyFilters();
 }
 
@@ -1510,6 +1513,11 @@ function updateWeakUI() {
 function setupRangeOptions() {
   const select = document.getElementById('range-filter');
   select.innerHTML = "";
+  const allOpt = document.createElement('option');
+  allOpt.value = "all";
+  allOpt.innerText = "全範囲 (1-990)";
+  select.appendChild(allOpt);
+
   const step = 100;
   for (let i = 0; i < 990; i += step) {
     let start = i + 1;
@@ -1519,10 +1527,6 @@ function setupRangeOptions() {
     opt.innerText = `No. ${start} - ${end}`;
     select.appendChild(opt);
   }
-  const allOpt = document.createElement('option');
-  allOpt.value = "all";
-  allOpt.innerText = "全範囲 (1-990)";
-  select.appendChild(allOpt);
 }
 
 function setupScrollBehavior() {
@@ -1580,7 +1584,7 @@ function speak(text) {
 function showSearch() {
   showScreen('search-screen');
   document.getElementById('search-input').value = "";
-  document.getElementById('range-filter').value = "1-100";
+  document.getElementById('range-filter').value = "all";
   setMaskMode('none');
   applyFilters();
 }
@@ -1771,7 +1775,7 @@ function showLevels(count) {
     btn.innerText = label;
     btn.onclick = () => {
         closeCourseModal();
-        setTimeout(() => checkResume(start, end, count, label), 200);
+        setTimeout(() => triggerQuizStart('range', label, {start, end, count}), 200);
     };
     container.appendChild(btn);
   }
@@ -1791,7 +1795,8 @@ function showRandomModes() {
     btn.style.padding = "20px";
     btn.onclick = () => {
         closeCourseModal();
-        setTimeout(() => startRandomQuiz(num), 200);
+        const label = `ランダム ${num}問`;
+        setTimeout(() => triggerQuizStart('random', label, {count: num}), 200);
     };
     container.appendChild(btn);
   });
@@ -1833,8 +1838,7 @@ function showConfusingOptions() {
         btn.innerHTML = `<span style="font-size:18px; font-weight:bold;">${item.prefix}-</span> <span style="font-size:12px;">(${item.count}語)</span>`;
         btn.onclick = () => {
             closeCourseModal();
-            // ★変更点：ここでもcheckResumeを呼ぶように変更
-            setTimeout(() => checkResume(0, 0, 0, label, item.prefix), 200);
+            setTimeout(() => triggerQuizStart('prefix', label, {prefix: item.prefix}), 200);
         };
         container.appendChild(btn);
     }
@@ -1843,57 +1847,102 @@ function showConfusingOptions() {
   document.getElementById('course-modal').classList.remove('hidden');
 }
 
-function startPrefixQuiz(prefix, label) {
-  let pool = rawData.filter(d => d.en.startsWith(prefix));
-  pool.sort(() => Math.random() - 0.5);
-  const qCount = Math.min(pool.length, 20);
-  currentQuestions = pool.slice(0, qCount);
-  startQuizSequence('confusing', label);
-}
-
-function startRandomQuiz(count) {
-  let pool = [...rawData];
-  pool.sort(() => Math.random() - 0.5);
-  currentQuestions = pool.slice(0, count);
-  startQuizSequence('random');
-}
-
 function startWeakMode() {
   if(!weakIDs.length) return alert("苦手単語はありません！");
-  isWeakMode = true;
-  let pool = rawData.filter(d => weakIDs.includes(d.id));
-  pool.sort(() => Math.random() - 0.5);
-  currentQuestions = pool;
-  startQuizSequence('weak');
+  triggerQuizStart('weak', '苦手特訓', {});
 }
 
-// RESUME LOGIC (Updated for prefix support)
-let pendingQuizData = null;
+// =========================================================
+// ▼▼▼ RESUME / COMMON START LOGIC ▼▼▼
+// =========================================================
+let pendingQuizCallback = null; 
 
-function checkResume(start, end, count, label, prefix = null) {
+function triggerQuizStart(mode, label, params) {
   const savedState = localStorage.getItem(RESUME_KEY);
+  
+  // 開始用コールバック（新規開始）
+  const startNewAction = () => {
+    isWeakMode = (mode === 'weak');
+    let pool = [];
+
+    if (mode === 'range') {
+        pool = rawData.slice(params.start, params.end);
+    } else if (mode === 'random') {
+        pool = [...rawData];
+    } else if (mode === 'prefix') {
+        pool = rawData.filter(d => d.en.startsWith(params.prefix));
+    } else if (mode === 'weak') {
+        pool = rawData.filter(d => weakIDs.includes(d.id));
+    }
+
+    pool.sort(() => Math.random() - 0.5);
+    
+    if(params.count && pool.length > params.count) {
+        pool = pool.slice(0, params.count);
+    } else if (mode === 'prefix' && pool.length > 20) {
+        pool = pool.slice(0, 20); 
+    }
+
+    currentQuestions = pool;
+    startQuizSequence(mode, label);
+  };
+
   if(savedState) {
     const state = JSON.parse(savedState);
-    if(state.label === label) {
-      pendingQuizData = { state, start, end, count, label, prefix };
+    if(state.label === label && state.mode !== 'bulk') {
+      pendingQuizCallback = startNewAction;
       document.getElementById('resume-modal').classList.remove('hidden');
       return;
     }
   }
-  // No resume, start new
-  if(prefix) startPrefixQuiz(prefix, label);
-  else startNewQuiz(start, end, count, label);
+
+  startNewAction();
+}
+
+function startBulkTest(count) {
+  const savedState = localStorage.getItem(RESUME_KEY);
+  const startNewBulk = () => {
+    let pool = [...rawData];
+    pool.sort(() => Math.random() - 0.5);
+    currentQuestions = pool.slice(0, count);
+    userAnswers = new Array(count).fill(null);
+    showScreen('bulk-test-screen');
+    renderBulkTest();
+    saveBulkState();
+  };
+
+  if (savedState) {
+    const state = JSON.parse(savedState);
+    if (state.mode === 'bulk') {
+       pendingQuizCallback = startNewBulk;
+       document.getElementById('resume-modal').classList.remove('hidden');
+       return;
+    }
+  }
+  startNewBulk();
 }
 
 function confirmResume() {
   document.getElementById('resume-modal').classList.add('hidden');
-  const s = pendingQuizData.state;
+  const savedState = localStorage.getItem(RESUME_KEY);
+  if(!savedState) return; 
+
+  const s = JSON.parse(savedState);
+
+  if(s.mode === 'bulk') {
+    currentQuestions = s.questions;
+    userAnswers = s.userAnswers;
+    restoreBulkTest();
+    return;
+  }
+
   currentQuestions = s.questions;
   currentIndex = s.index;
   score = s.score;
   wrongAnswers = s.wrong;
   quizHistory = s.history || []; 
-  isWeakMode = false;
+  isWeakMode = (s.label === '苦手特訓');
+
   showScreen('quiz-screen');
   showQuestion();
 }
@@ -1901,26 +1950,14 @@ function confirmResume() {
 function cancelResume() {
   document.getElementById('resume-modal').classList.add('hidden');
   localStorage.removeItem(RESUME_KEY);
-  if(pendingQuizData.prefix) {
-      startPrefixQuiz(pendingQuizData.prefix, pendingQuizData.label);
-  } else {
-      startNewQuiz(pendingQuizData.start, pendingQuizData.end, pendingQuizData.count, pendingQuizData.label);
-  }
-}
-
-function startNewQuiz(start, end, count, label) {
-  isWeakMode = false;
-  let pool = rawData.slice(start, end);
-  pool.sort(() => Math.random() - 0.5);
-  currentQuestions = pool.slice(0, count);
-  startQuizSequence('range', label);
+  if(pendingQuizCallback) pendingQuizCallback();
 }
 
 function startQuizSequence(mode, label = null) {
   currentIndex = 0;
   score = 0;
   wrongAnswers = [];
-  quizHistory = []; // 履歴リセット
+  quizHistory = []; 
   localStorage.removeItem(RESUME_KEY);
   currentQuestions.forEach(q => q._mode = mode); 
   if(label) currentQuestions._label = label;
@@ -1928,7 +1965,7 @@ function startQuizSequence(mode, label = null) {
   showQuestion();
 }
 
-// --- QUIZ LOGIC WITH REVIEW ---
+// --- QUIZ LOGIC (FIXED) ---
 function prevQ() {
   if (currentIndex > 0) {
     currentIndex--;
@@ -1973,6 +2010,7 @@ function showQuestion(isReview = false) {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
     btn.innerText = o.jp;
+    btn.dataset.id = o.id; // ★修正：IDを保存して、日本語重複問題を回避
     btn.onclick = () => checkAnswer(o, q);
     optContainer.appendChild(btn);
   });
@@ -1991,8 +2029,8 @@ function restoreResult(historyData) {
     if(o.id === historyData.correctId) btn.classList.add('correct');
     if(historyData.selectedId === o.id && o.id !== historyData.correctId) btn.classList.add('wrong');
     
-    // ★ここを変更：横並び＆シンプル表示
     let originalWord = "";
+    // ★修正：IDを使って正しい英語を取得
     const wData = rawData.find(d => d.id === o.id);
     if(wData) originalWord = wData.en;
     
@@ -2036,8 +2074,9 @@ function toggleHint() {
 function checkAnswer(selected, correct) {
   const opts = Array.from(document.getElementById('options').children);
   const optData = opts.map(btn => {
-     const found = rawData.find(d => d.jp === btn.innerText);
-     return found ? {jp: found.jp, id: found.id} : {jp: btn.innerText, id: -1};
+     // ID経由でデータを再取得するか、ボタンに仕込んだIDを使う
+     const wId = parseInt(btn.dataset.id);
+     return {jp: btn.innerText, id: wId};
   });
   
   quizHistory[currentIndex] = {
@@ -2050,14 +2089,15 @@ function checkAnswer(selected, correct) {
   for(let btn of opts) {
     btn.disabled = true;
     
-    const wData = rawData.find(d => d.jp === btn.innerText);
+    // ★修正：IDを使って正しい英語を取得（日本語重複時のバグ修正）
+    const wId = parseInt(btn.dataset.id);
+    const wData = rawData.find(d => d.id === wId);
     let enText = "";
     if(wData) enText = wData.en;
     
     if(btn.innerText === correct.jp) btn.classList.add('correct');
     if(btn.innerText === selected.jp && selected.id !== correct.id) btn.classList.add('wrong');
     
-    // ★ここを変更：横並び＆シンプル表示
     btn.innerHTML = `<span>${btn.innerText}</span> <span style="font-size:16px; opacity:0.8; font-weight:normal;">${enText}</span>`;
   }
 
@@ -2081,10 +2121,15 @@ function checkAnswer(selected, correct) {
   fb.style.display = 'block';
   
   if(currentQuestions._label) saveQuizState();
+
+  setTimeout(() => {
+    fb.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
 }
 
 function saveQuizState() {
   const state = {
+      mode: 'quiz', 
       label: currentQuestions._label,
       questions: currentQuestions,
       index: currentIndex,
@@ -2099,6 +2144,7 @@ function nextQ() {
   currentIndex++;
   if(currentIndex < currentQuestions.length) {
     showQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   } else {
     localStorage.removeItem(RESUME_KEY);
     showResult();
@@ -2107,25 +2153,15 @@ function nextQ() {
 
 // --- BULK TEST LOGIC ---
 
-function startBulkTest(count) {
-  let pool = [...rawData];
-  pool.sort(() => Math.random() - 0.5);
-  currentQuestions = pool.slice(0, count);
-  userAnswers = new Array(count).fill(null);
+function renderBulkTest() {
+  const con = document.getElementById('bulk-test-list');
+  con.innerHTML = "";
   
   document.getElementById('bulk-score-area').style.display = 'none';
   document.getElementById('bulk-subtitle').style.display = 'block';
   document.getElementById('bulk-grade-btn').style.display = 'block';
   document.getElementById('bulk-home-btn').style.display = 'none';
-  
-  showScreen('bulk-test-screen');
-  renderBulkTest();
-}
 
-function renderBulkTest() {
-  const con = document.getElementById('bulk-test-list');
-  con.innerHTML = "";
-  
   const allJpOptions = currentQuestions.map(q => q.jp).sort(() => Math.random() - 0.5);
 
   currentQuestions.forEach((q, idx) => {
@@ -2145,8 +2181,29 @@ function renderBulkTest() {
   });
 }
 
+function restoreBulkTest() {
+  showScreen('bulk-test-screen');
+  renderBulkTest();
+  userAnswers.forEach((ans, idx) => {
+    if(ans) {
+      const select = document.getElementById(`bulk-select-${idx}`);
+      if(select) select.value = ans;
+    }
+  });
+}
+
 function recordBulkAnswer(idx, value) {
   userAnswers[idx] = value;
+  saveBulkState(); 
+}
+
+function saveBulkState() {
+  const state = {
+    mode: 'bulk',
+    questions: currentQuestions,
+    userAnswers: userAnswers
+  };
+  localStorage.setItem(RESUME_KEY, JSON.stringify(state));
 }
 
 function finishBulkTest() {
@@ -2161,7 +2218,6 @@ function finishBulkTest() {
     select.disabled = true;
     resDiv.style.display = 'block';
     
-    // ★変更点：文字サイズを大きく
     if (userAns === q.jp) {
       score++;
       resDiv.innerHTML = `<span style="color:var(--correct); font-size:16px; font-weight:900;">正解！⭕️</span>`;
@@ -2195,6 +2251,7 @@ function finishBulkTest() {
   document.getElementById('bulk-grade-btn').style.display = 'none';
   document.getElementById('bulk-home-btn').style.display = 'block';
 
+  localStorage.removeItem(RESUME_KEY);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -2236,6 +2293,3 @@ window.onload = init;
 </script>
 </body>
 </html>
-
-
-
