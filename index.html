@@ -44,13 +44,14 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-bottom: calc(10px + var(--safe-bottom));
+    padding-bottom: calc(10px + var(--safe-bottom)); /* 下部余白を削減 */
   }
 
   .content-padding {
     padding: 20px 20px calc(80px + var(--safe-bottom)) 20px;
   }
   
+  /* ★修正: クイズ画面の下部余白を極小に */
   #quiz-screen.content-padding {
     padding-bottom: calc(5px + var(--safe-bottom)) !important;
   }
@@ -63,20 +64,6 @@
     text-align: center;
   }
   h1 { font-size: 28px; margin: 0; font-weight: 800; letter-spacing: -0.5px; }
-  
-  /* ★修正：サブタイトル用画像のスタイル */
-  .header-img-container {
-    margin: 15px 0 5px 0;
-    text-align: center;
-  }
-  .header-img-container img {
-    max-width: 80%;       /* 画面幅の80%くらいのサイズ */
-    height: auto;
-    border-radius: 10px;  /* 角を少し丸く */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 影をつける */
-    object-fit: contain;
-  }
-
   .subtitle { color: var(--text-sub); font-size: 13px; margin-top: 5px; font-weight: 500; }
 
   /* --- MENU --- */
@@ -286,12 +273,7 @@
   <div id="home-screen" class="content-padding">
     <div class="home-header">
       <h1>TOEIC単語 990</h1>
-      
-      <div class="header-img-container">
-        <img src="nonomura.png" alt="TOEIC Header Image" onerror="this.style.display='none'">
-      </div>
-      
-      <p class="subtitle">↑進撃の野々村</p>
+      <p class="subtitle">まずはありがとう。</p>
     </div>
     
     <div class="weak-box">
@@ -1515,7 +1497,6 @@ const dataPart3 = [
 ];
 // --- END PART 3 ---
 
-
 // =========================================================
 // ▲▲▲ データ貼り付けエリア ここまで ▲▲▲
 // =========================================================
@@ -2493,7 +2474,7 @@ function renderBulkTest() {
       <div style="font-size:24px; font-weight:800; margin-bottom:15px; color:var(--text-main);">${q.en}</div>
       
       <select id="bulk-select-${idx}" onchange="recordBulkAnswer(${idx}, this.value)" style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--border); font-size:16px; background:#fff; appearance:none;">
-        <option value="">選択してください（50音順）</option>
+        <option value="">選択してください</option>
         ${optionsHTML}
       </select>
       <div id="bulk-result-${idx}" style="margin-top:10px; font-weight:bold; display:none;"></div>
@@ -2616,4 +2597,3 @@ window.onload = init;
 </script>
 </body>
 </html>
-
