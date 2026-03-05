@@ -44,14 +44,13 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-bottom: calc(10px + var(--safe-bottom)); /* 下部余白を削減 */
+    padding-bottom: calc(10px + var(--safe-bottom));
   }
 
   .content-padding {
     padding: 20px 20px calc(80px + var(--safe-bottom)) 20px;
   }
   
-  /* ★修正: クイズ画面の下部余白を極小に */
   #quiz-screen.content-padding {
     padding-bottom: calc(5px + var(--safe-bottom)) !important;
   }
@@ -64,6 +63,19 @@
     text-align: center;
   }
   h1 { font-size: 28px; margin: 0; font-weight: 800; letter-spacing: -0.5px; }
+  
+  .header-img-container {
+    margin: 15px 0 5px 0;
+    text-align: center;
+  }
+  .header-img-container img {
+    max-width: 80%;       
+    height: auto;
+    border-radius: 10px;  
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+    object-fit: contain;
+  }
+
   .subtitle { color: var(--text-sub); font-size: 13px; margin-top: 5px; font-weight: 500; }
 
   /* --- MENU --- */
@@ -213,6 +225,21 @@
   .ri-en { font-weight: 800; color: var(--wrong); font-size: 20px; letter-spacing: -0.5px; }
   .ri-jp { font-size: 16px; color: var(--text-main); flex: 1; text-align: right; margin-left: 20px;}
 
+  /* --- HISTORY SCREEN --- */
+  .history-card { background:#fff; border-radius:16px; padding:15px; margin-bottom:15px; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:1px solid #E5E5EA; }
+  .history-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .history-date { font-size:12px; color:var(--text-sub); }
+  .history-score { font-size:18px; font-weight:800; color:var(--primary); }
+  .history-score.perfect { color:var(--correct); }
+  .history-label { font-size:16px; font-weight:700; color:var(--text-main); margin-bottom:10px; }
+  .history-toggle-btn { background:#F2F2F7; border:none; width:100%; padding:10px; border-radius:8px; font-size:13px; font-weight:600; color:var(--text-main); cursor:pointer; text-align: center; transition: 0.1s;}
+  .history-toggle-btn:active { transform: scale(0.98); background: #E5E5EA; }
+  .history-wrong-list { margin-top:10px; padding-top:10px; border-top:1px dashed #C6C6C8; }
+  .history-wrong-item { display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px; padding-bottom:8px; border-bottom:1px solid #f2f2f7; }
+  .history-wrong-item:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+  .hw-en { font-weight:700; color:var(--wrong); }
+  .hw-jp { color:var(--text-main); text-align:right; font-size: 13px; margin-left: 10px;}
+
   /* MODAL */
   .modal-overlay { 
     position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
@@ -273,6 +300,11 @@
   <div id="home-screen" class="content-padding">
     <div class="home-header">
       <h1>TOEIC単語 990</h1>
+      
+      <div class="header-img-container">
+        <img src="top-image.png" alt="TOEIC Header Image" onerror="this.style.display='none'">
+      </div>
+      
       <p class="subtitle">まずはありがとう。</p>
     </div>
     
@@ -322,6 +354,15 @@
 	<span class="menu-title">ランダム</span>
 	<span class="menu-desc">990単語から</span>
       </div>
+      
+      <div class="menu-btn large" onclick="showHistory()" style="background:#F2F2F7; margin-top: 5px;">
+        <div>
+          <span class="menu-title" style="color:var(--text-main);">📈 学習履歴</span>
+          <span class="menu-desc">過去の成績と間違えた単語の復習</span>
+        </div>
+        <span style="font-size:30px;">📅</span>
+      </div>
+      
     </div>
   </div>
 
@@ -465,6 +506,21 @@
     <div class="list-container" id="list-content" style="padding-top:20px;"></div>
     <div class="safe-area-spacer"></div>
   </div>
+  
+  <div id="history-screen" class="hidden">
+    <div class="sticky-wrapper" id="sticky-header-history">
+      <div class="header-nav">
+        <button class="back-btn" onclick="goHome()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          ホーム
+        </button>
+        <span class="header-title">学習履歴</span>
+        <div style="width:60px;"></div>
+      </div>
+    </div>
+    <div class="list-container" id="history-list" style="padding-top:20px;"></div>
+    <div class="safe-area-spacer"></div>
+  </div>
 
   <div id="resume-modal" class="hidden modal-overlay">
     <div class="modal-box">
@@ -492,7 +548,6 @@
 // =========================================================
 // ▼▼▼ 注意：ここに元の単語データを貼り付けてください ▼▼▼
 // =========================================================
-
 // --- DATA PART 1 (1-250) ---
 const dataPart1 = [
 {id:1,en:"product",jp:"製品",hint:"pro(前へ) + duct(導く) ⇒ 生み出されたもの"},
@@ -1626,6 +1681,7 @@ rawData.forEach(d => {
 // --- APP LOGIC ---
 const STORAGE_KEY = 'toeic_990_v15';
 const RESUME_KEY = 'toeic_990_resume_state';
+const HISTORY_KEY = 'toeic_990_history_v1'; // ★履歴保存用のキー
 
 let weakIDs = [], currentQuestions = [], currentIndex = 0, score = 0, isWeakMode = false;
 let maskMode = 'none';
@@ -1633,12 +1689,14 @@ let isHintHidden = false;
 let wrongAnswers = []; 
 let userAnswers = [];
 let quizHistory = []; 
-let currentCorrectId = null; // 苦手モードで正解したIDを一時保存
+let currentCorrectId = null; 
 
-// ★検索画面の無限スクロール用変数
+let historyData = []; // ★履歴データを入れる配列
+
+// 検索画面の無限スクロール用変数
 let currentSearchList = [];
 let loadedCount = 0;
-const BATCH_SIZE = 50; // 一度に読み込む数
+const BATCH_SIZE = 50; 
 
 function init() {
   loadWeakData();
@@ -1652,8 +1710,6 @@ function init() {
   // 無限スクロール監視
   window.addEventListener('scroll', () => {
     if(document.getElementById('search-screen').classList.contains('hidden')) return;
-    
-    // ページ下部に近づいたら追加読み込み
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
       loadMoreSearchResults();
     }
@@ -1672,6 +1728,109 @@ function saveWeakData() {
 
 function updateWeakUI() {
   document.getElementById('weak-count').innerText = weakIDs.length;
+}
+
+// ★履歴データを読み込む関数
+function loadHistory() {
+  const saved = localStorage.getItem(HISTORY_KEY);
+  if(saved) historyData = JSON.parse(saved);
+}
+
+// ★履歴データを保存する関数
+function saveHistory(label, score, total, wrongArr) {
+  loadHistory(); // 最新のデータを読み込む
+  const dateStr = formatDate(new Date()); // 今の日時を取得
+  
+  const record = {
+    date: dateStr,
+    label: label,
+    score: score,
+    total: total,
+    // 間違えた単語は英語と日本語だけ保存しておく
+    wrongAnswers: wrongArr.map(w => ({en: w.en, jp: w.jp})) 
+  };
+  
+  historyData.unshift(record); // 最新のものを配列の一番前に追加
+  if(historyData.length > 100) historyData.pop(); // 100件を超えたら古いものを消す
+  
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(historyData));
+}
+
+// 日付をきれいな文字（YYYY/MM/DD HH:MM）にする関数
+function formatDate(date) {
+  const y = date.getFullYear();
+  const m = ('0' + (date.getMonth() + 1)).slice(-2);
+  const d = ('0' + date.getDate()).slice(-2);
+  const h = ('0' + date.getHours()).slice(-2);
+  const min = ('0' + date.getMinutes()).slice(-2);
+  return `${y}/${m}/${d} ${h}:${min}`;
+}
+
+// ★学習履歴画面を表示する関数
+function showHistory() {
+  loadHistory();
+  showScreen('history-screen');
+  renderHistory();
+}
+
+// ★学習履歴を画面に書き出す関数
+function renderHistory() {
+  const con = document.getElementById('history-list');
+  con.innerHTML = "";
+  
+  if(historyData.length === 0) {
+    con.innerHTML = "<div style='text-align:center; color:var(--text-sub); margin-top:40px; font-weight:bold; line-height:1.5;'>まだ学習履歴がありません<br>クイズに挑戦してみましょう！</div>";
+    return;
+  }
+  
+  const fragment = document.createDocumentFragment();
+  
+  historyData.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'history-card';
+    
+    let wrongHtml = "";
+    // 間違えた単語がある場合
+    if(item.wrongAnswers.length > 0) {
+      wrongHtml = `
+        <button class="history-toggle-btn" onclick="toggleHistoryWrong(${idx}, this)">間違えた単語を見る (${item.wrongAnswers.length}語) ▼</button>
+        <div id="hw-list-${idx}" class="history-wrong-list hidden">
+          ${item.wrongAnswers.map(w => `
+            <div class="history-wrong-item">
+              <span class="hw-en">${w.en}</span>
+              <span class="hw-jp">${w.jp}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } else {
+      // 全問正解だった場合
+      wrongHtml = `<div style="color:var(--correct); font-size:14px; font-weight:bold; margin-top:10px; text-align:center;">🎉 全問正解</div>`;
+    }
+    
+    div.innerHTML = `
+      <div class="history-top">
+        <span class="history-date">${item.date}</span>
+        <span class="history-score ${item.score === item.total ? 'perfect' : ''}">${item.score} <span style="font-size:12px; color:var(--text-sub);">/ ${item.total}</span></span>
+      </div>
+      <div class="history-label">${item.label}</div>
+      ${wrongHtml}
+    `;
+    fragment.appendChild(div);
+  });
+  con.appendChild(fragment);
+}
+
+// ★間違えた単語リストの表示/非表示を切り替える関数
+function toggleHistoryWrong(idx, btn) {
+  const list = document.getElementById(`hw-list-${idx}`);
+  if(list.classList.contains('hidden')) {
+    list.classList.remove('hidden');
+    btn.innerHTML = btn.innerHTML.replace('▼', '▲');
+  } else {
+    list.classList.add('hidden');
+    btn.innerHTML = btn.innerHTML.replace('▲', '▼');
+  }
 }
 
 function setupRangeOptions() {
@@ -1697,6 +1856,7 @@ function setupScrollBehavior() {
   let lastScrollTop = 0;
   const stickyHeader = document.getElementById('sticky-header');
   const stickyHeaderList = document.getElementById('sticky-header-list'); 
+  const stickyHeaderHistory = document.getElementById('sticky-header-history'); // ★追加
   let ticking = false;
   
   window.addEventListener('scroll', () => {
@@ -1711,6 +1871,9 @@ function setupScrollBehavior() {
         else if(!document.getElementById('list-screen').classList.contains('hidden')) {
            stickyHeaderList.style.transform = `translate3d(0, ${offset}, 0)`;
         }
+        else if(!document.getElementById('history-screen').classList.contains('hidden')) { // ★追加
+           stickyHeaderHistory.style.transform = `translate3d(0, ${offset}, 0)`;
+        }
         
         lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
         ticking = false;
@@ -1722,7 +1885,6 @@ function setupScrollBehavior() {
 
 // Navigation
 function showScreen(id) {
-  // ★画面遷移時にモーダルも強制的に閉じておく
   document.querySelectorAll('.modal-overlay').forEach(el => {
     el.classList.remove('active', 'hidden'); 
     el.classList.remove('active');
@@ -1730,7 +1892,7 @@ function showScreen(id) {
     if(box) box.classList.remove('active', 'closing');
   });
 
-  ['home-screen', 'quiz-screen', 'result-screen', 'list-screen', 'search-screen', 'bulk-test-screen'].forEach(s => {
+  ['home-screen', 'quiz-screen', 'result-screen', 'list-screen', 'search-screen', 'bulk-test-screen', 'history-screen'].forEach(s => {
     document.getElementById(s).classList.add('hidden');
   });
   document.getElementById(id).classList.remove('hidden');
@@ -1755,7 +1917,6 @@ function speak(text) {
 // --- SEARCH & WORD BOOK ---
 let searchTimeout;
 function onSearchInput() {
-  // ★高速化：入力のたびに処理せず、300ms待ってから処理（デバウンス）
   clearTimeout(searchTimeout);
   searchTimeout = setTimeout(applyFilters, 300);
 }
@@ -1778,8 +1939,6 @@ function setMaskMode(mode) {
     if(btnWeak) btnWeak.classList.add('active');
   }
   
-  // マスクモード切替時、すでに表示されているアイテムのクラスを書き換えるだけで済むように
-  // 全再描画ではなくCSSクラス操作を行う
   if(!document.getElementById('search-screen').classList.contains('hidden')) {
       updateMaskClasses('search-results');
   }
@@ -1788,7 +1947,6 @@ function setMaskMode(mode) {
   }
 }
 
-// ★追加：DOMを再生成せずにマスク状態だけ更新する関数
 function updateMaskClasses(containerId) {
     const con = document.getElementById(containerId);
     const enEls = con.querySelectorAll('.list-en');
@@ -1804,7 +1962,6 @@ function updateMaskClasses(containerId) {
         else el.classList.remove('masked', 'revealed');
     });
 }
-
 
 function toggleMask(target) {
   if(maskMode === target) setMaskMode('none');
@@ -1822,7 +1979,6 @@ function toggleListHints() {
   if(isHintHidden) btn.classList.add('active');
   else btn.classList.remove('active');
   
-  // ヒントもDOM再生成せずクラス操作で切り替え
   const hints = document.querySelectorAll('#search-results .list-hint');
   hints.forEach(h => isHintHidden ? h.classList.add('hidden') : h.classList.remove('hidden'));
 }
@@ -1849,22 +2005,20 @@ function applyFilters() {
     list = list.filter(d => d.en.toLowerCase().includes(searchVal) || d.jp.includes(searchVal));
   }
   
-  // ★全件表示に戻すが、一度に描画するのは50件ずつ（無限スクロール）
   currentSearchList = list;
   loadedCount = 0;
   
   const con = document.getElementById('search-results');
-  con.innerHTML = ""; // リセット
+  con.innerHTML = ""; 
   
   if(list.length === 0) {
     con.innerHTML = "<div style='padding:40px; text-align:center; color:#94a3b8;'>見つかりません</div>";
     return;
   }
   
-  loadMoreSearchResults(); // 最初のバッチを読み込む
+  loadMoreSearchResults(); 
 }
 
-// ★追加：分割読み込み関数
 function loadMoreSearchResults() {
     if(loadedCount >= currentSearchList.length) return;
     
@@ -2255,7 +2409,7 @@ function showQuestion(isReview = false) {
   
   document.getElementById('feedback').style.display = 'none';
   document.getElementById('options').innerHTML = "";
-  document.getElementById('weak-action-area').style.display = 'none'; // リセット
+  document.getElementById('weak-action-area').style.display = 'none'; 
   
   const prevBtn = document.getElementById('prev-btn');
   if (prevBtn) {
@@ -2376,11 +2530,10 @@ function checkAnswer(selected, correct) {
     fbMsg.innerText = "正解! 🎉";
     fbMsg.style.color = "var(--correct)";
     
-    // ★苦手モードなら、選択肢を表示する
     if(isWeakMode) {
       currentCorrectId = correct.id;
       weakActionArea.style.display = 'grid';
-      document.getElementById('next-q-btn').style.display = 'none'; // 次へボタンを隠して、選択を強制する
+      document.getElementById('next-q-btn').style.display = 'none'; 
     }
   } else {
     fbMsg.innerText = "不正解... 😢";
@@ -2399,7 +2552,6 @@ function checkAnswer(selected, correct) {
   setTimeout(() => { fb.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
 }
 
-// 苦手モードのアクション
 function weakActionKeep() {
   document.getElementById('next-q-btn').style.display = 'block';
   document.getElementById('weak-action-area').style.display = 'none';
@@ -2408,7 +2560,7 @@ function weakActionKeep() {
 
 function weakActionRemove() {
   if(currentCorrectId !== null) {
-    toggleWeak(currentCorrectId); // 削除
+    toggleWeak(currentCorrectId); 
   }
   document.getElementById('next-q-btn').style.display = 'block';
   document.getElementById('weak-action-area').style.display = 'none';
@@ -2450,7 +2602,6 @@ function renderBulkTest() {
   document.getElementById('bulk-grade-btn').style.display = 'block';
   document.getElementById('bulk-home-btn').style.display = 'none';
 
-  // ★超高速化：選択肢のHTML文字列をループの外で1回だけ作る
   const uniqueJpOptions = Array.from(new Set(currentQuestions.map(q => q.jp)));
   
   uniqueJpOptions.sort((jpA, jpB) => {
@@ -2463,12 +2614,11 @@ function renderBulkTest() {
 
   const optionsHTML = uniqueJpOptions.map(jp => `<option value="${jp}">${jp}</option>`).join('');
 
-  // フラグメントを使用
   const fragment = document.createDocumentFragment();
 
   currentQuestions.forEach((q, idx) => {
     const div = document.createElement('div');
-    div.style = "margin-bottom:30px; padding:15px; border-bottom:1px solid #eee; content-visibility: auto;"; // 表示最適化
+    div.style = "margin-bottom:30px; padding:15px; border-bottom:1px solid #eee; content-visibility: auto;"; 
     div.innerHTML = `
       <div style="font-size:14px; color:var(--text-sub); font-weight:bold; margin-bottom:5px;">Q${idx+1}. (No.${q.id})</div>
       <div style="font-size:24px; font-weight:800; margin-bottom:15px; color:var(--text-main);">${q.en}</div>
@@ -2555,6 +2705,9 @@ function finishBulkTest() {
   document.getElementById('bulk-grade-btn').style.display = 'none';
   document.getElementById('bulk-home-btn').style.display = 'block';
 
+  // ★ここに追加：一括テストの履歴を保存
+  saveHistory('50問一括テスト', score, currentQuestions.length, wrongAnswers);
+
   localStorage.removeItem(RESUME_KEY);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -2563,6 +2716,10 @@ function showResult() {
   showScreen('result-screen');
   document.getElementById('final-score').innerText = `${score} / ${currentQuestions.length}`;
   
+  // ★ここに追加：通常テストの履歴を保存
+  const label = currentQuestions._label || 'クイズ';
+  saveHistory(label, score, currentQuestions.length, wrongAnswers);
+
   let rate = score / currentQuestions.length;
   let txt = "";
   if(rate === 1) txt = "Perfect!! 素晴らしい！🏆";
