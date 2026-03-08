@@ -150,15 +150,16 @@
 
   /* --- LIST ITEMS --- */
   .list-container { padding: 0 20px; }
-  .list-item { padding: 16px 0; border-bottom: 0.5px solid rgba(0,0,0,0.1); content-visibility: auto; contain-intrinsic-size: 100px; }
+  .list-item { padding: 16px 0; border-bottom: 0.5px solid rgba(0,0,0,0.1); content-visibility: auto; contain-intrinsic-size: 100px; min-width: 0; }
   .list-id-top { font-size: 11px; color: var(--text-sub); font-weight: 600; margin-bottom: 4px; display: block; letter-spacing: 0.5px; }
   .list-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-  .list-en { font-size: 22px; font-weight: 700; color: var(--text-main); letter-spacing: -0.3px; }
+  .list-en { font-size: 22px; font-weight: 700; color: var(--text-main); letter-spacing: -0.3px; word-break: break-word; }
   .audio-btn { width: 44px; height: 44px; border-radius: 50%; background: #E5F1FF; color: var(--primary); border: none; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-left: 10px; flex-shrink: 0; }
   .audio-btn:active { transform: scale(0.9); background: #d1e3fa; }
-  .list-jp { font-size: 15px; color: #3A3A3C; line-height: 1.5; margin-top: 4px; }
+  
+  .list-jp { font-size: 15px; color: #3A3A3C; line-height: 1.5; margin-top: 4px; word-break: break-word; }
   .hint-row { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 8px; gap: 10px; }
-  .list-hint { font-size: 13px; color: #856404; background: #FFF3CD; padding: 8px 12px; border-radius: 8px; line-height: 1.4; flex: 1; }
+  .list-hint { font-size: 13px; color: #856404; background: #FFF3CD; padding: 8px 12px; border-radius: 8px; line-height: 1.4; flex: 1; min-width: 0; word-break: break-word; }
   .list-hint.hidden { display: none; }
 
   .weak-toggle-btn {
@@ -177,7 +178,7 @@
   
   .word-id { font-size: 13px; color: var(--text-sub); font-weight: 600; display: block; margin-bottom: 2px; }
   
-  .word-text { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 0; color: var(--text-main); }
+  .word-text { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 0; color: var(--text-main); word-break: break-word; }
   
   .hint-zone { text-align:center; margin-bottom:15px; min-height:40px; }
   
@@ -237,8 +238,8 @@
   .history-wrong-list { margin-top:10px; padding-top:10px; border-top:1px dashed #C6C6C8; }
   .history-wrong-item { display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px; padding-bottom:8px; border-bottom:1px solid #f2f2f7; }
   .history-wrong-item:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
-  .hw-en { font-weight:700; color:var(--wrong); }
-  .hw-jp { color:var(--text-main); text-align:right; font-size: 13px; margin-left: 10px;}
+  .hw-en { font-weight:700; color:var(--wrong); word-break: break-word; }
+  .hw-jp { color:var(--text-main); text-align:right; font-size: 13px; margin-left: 10px; word-break: break-word; }
 
   /* MODAL */
   .modal-overlay { 
@@ -291,6 +292,83 @@
 
   @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
   @keyframes popOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.9); } }
+
+  /* ====================================================================
+     PC / スマホ横画面（ランドスケープ）用のレイアウト最適化 (2列)
+     ==================================================================== */
+  @media (min-width: 680px) {
+    .container {
+      max-width: 860px;
+    }
+    
+    .list-container {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 30px;
+      align-items: start; 
+    }
+
+    #bulk-test-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 30px;
+      align-items: start;
+      padding: 0 20px;
+    }
+
+    #options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+    }
+    .option-btn {
+      margin-bottom: 0; 
+      height: 100%;
+    }
+
+    .menu-grid {
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    .menu-btn.large, .menu-btn.bulk {
+      grid-column: span 2; 
+    }
+    .menu-btn.large:last-child {
+      grid-column: span 4; 
+    }
+  }
+
+  /* ====================================================================
+     ★追加：さらに大きい画面（PC全画面など）用のレイアウト最適化 (3列)
+     ==================================================================== */
+  @media (min-width: 1024px) {
+    .container {
+      max-width: 1200px; /* 3列分のスペースを確保 */
+    }
+    
+    /* 単語リスト、履歴リストを3列化 */
+    .list-container {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    /* 50問一括テストのリストを3列化 */
+    #bulk-test-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    /* クイズ画面は横に広がりすぎると見づらいので、中央に寄せて最大幅を制限 */
+    .quiz-card, .hint-zone, #options, #feedback, .weak-action-area {
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    /* クイズ画面の一番下にある「前へ」ボタンエリアも中央に揃える */
+    #quiz-screen > div:last-child {
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
 </style>
 </head>
 <body>
@@ -548,6 +626,7 @@
 // =========================================================
 // ▼▼▼ 注意：ここに元の単語データを貼り付けてください ▼▼▼
 // =========================================================
+
 // --- DATA PART 1 (1-250) ---
 const dataPart1 = [
 {id:1,en:"product",jp:"製品",hint:"pro(前へ) + duct(導く) ⇒ 生み出されたもの"},
@@ -1552,6 +1631,7 @@ const dataPart3 = [
 ];
 // --- END PART 3 ---
 
+
 // =========================================================
 // ▲▲▲ データ貼り付けエリア ここまで ▲▲▲
 // =========================================================
@@ -1665,23 +1745,19 @@ const rawData = [
   ...dataPart3
 ];
 
-// ID順に並べ替え
 rawData.sort((a, b) => a.id - b.id);
 
-// ★ここで「ふりがな」を合体させています
 rawData.forEach(d => {
   if (kanaMap[d.id]) {
     d.kana = kanaMap[d.id];
   } else {
-    // 万が一IDに対応するふりがながない場合は、そのままの漢字を使う（エラー防止）
     d.kana = d.jp; 
   }
 });
 
-// --- APP LOGIC ---
 const STORAGE_KEY = 'toeic_990_v15';
 const RESUME_KEY = 'toeic_990_resume_state';
-const HISTORY_KEY = 'toeic_990_history_v1'; // ★履歴保存用のキー
+const HISTORY_KEY = 'toeic_990_history_v1'; 
 
 let weakIDs = [], currentQuestions = [], currentIndex = 0, score = 0, isWeakMode = false;
 let maskMode = 'none';
@@ -1691,9 +1767,8 @@ let userAnswers = [];
 let quizHistory = []; 
 let currentCorrectId = null; 
 
-let historyData = []; // ★履歴データを入れる配列
+let historyData = []; 
 
-// 検索画面の無限スクロール用変数
 let currentSearchList = [];
 let loadedCount = 0;
 const BATCH_SIZE = 50; 
@@ -1707,7 +1782,6 @@ function init() {
   if(rf) rf.value = "all";
   applyFilters();
   
-  // 無限スクロール監視
   window.addEventListener('scroll', () => {
     if(document.getElementById('search-screen').classList.contains('hidden')) return;
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
@@ -1730,33 +1804,29 @@ function updateWeakUI() {
   document.getElementById('weak-count').innerText = weakIDs.length;
 }
 
-// ★履歴データを読み込む関数
 function loadHistory() {
   const saved = localStorage.getItem(HISTORY_KEY);
   if(saved) historyData = JSON.parse(saved);
 }
 
-// ★履歴データを保存する関数
 function saveHistory(label, score, total, wrongArr) {
-  loadHistory(); // 最新のデータを読み込む
-  const dateStr = formatDate(new Date()); // 今の日時を取得
+  loadHistory(); 
+  const dateStr = formatDate(new Date()); 
   
   const record = {
     date: dateStr,
     label: label,
     score: score,
     total: total,
-    // 間違えた単語は英語と日本語だけ保存しておく
     wrongAnswers: wrongArr.map(w => ({en: w.en, jp: w.jp})) 
   };
   
-  historyData.unshift(record); // 最新のものを配列の一番前に追加
-  if(historyData.length > 100) historyData.pop(); // 100件を超えたら古いものを消す
+  historyData.unshift(record); 
+  if(historyData.length > 100) historyData.pop(); 
   
   localStorage.setItem(HISTORY_KEY, JSON.stringify(historyData));
 }
 
-// 日付をきれいな文字（YYYY/MM/DD HH:MM）にする関数
 function formatDate(date) {
   const y = date.getFullYear();
   const m = ('0' + (date.getMonth() + 1)).slice(-2);
@@ -1766,14 +1836,12 @@ function formatDate(date) {
   return `${y}/${m}/${d} ${h}:${min}`;
 }
 
-// ★学習履歴画面を表示する関数
 function showHistory() {
   loadHistory();
   showScreen('history-screen');
   renderHistory();
 }
 
-// ★学習履歴を画面に書き出す関数
 function renderHistory() {
   const con = document.getElementById('history-list');
   con.innerHTML = "";
@@ -1790,7 +1858,6 @@ function renderHistory() {
     div.className = 'history-card';
     
     let wrongHtml = "";
-    // 間違えた単語がある場合
     if(item.wrongAnswers.length > 0) {
       wrongHtml = `
         <button class="history-toggle-btn" onclick="toggleHistoryWrong(${idx}, this)">間違えた単語を見る (${item.wrongAnswers.length}語) ▼</button>
@@ -1804,7 +1871,6 @@ function renderHistory() {
         </div>
       `;
     } else {
-      // 全問正解だった場合
       wrongHtml = `<div style="color:var(--correct); font-size:14px; font-weight:bold; margin-top:10px; text-align:center;">🎉 全問正解</div>`;
     }
     
@@ -1821,7 +1887,6 @@ function renderHistory() {
   con.appendChild(fragment);
 }
 
-// ★間違えた単語リストの表示/非表示を切り替える関数
 function toggleHistoryWrong(idx, btn) {
   const list = document.getElementById(`hw-list-${idx}`);
   if(list.classList.contains('hidden')) {
@@ -1856,7 +1921,7 @@ function setupScrollBehavior() {
   let lastScrollTop = 0;
   const stickyHeader = document.getElementById('sticky-header');
   const stickyHeaderList = document.getElementById('sticky-header-list'); 
-  const stickyHeaderHistory = document.getElementById('sticky-header-history'); // ★追加
+  const stickyHeaderHistory = document.getElementById('sticky-header-history'); 
   let ticking = false;
   
   window.addEventListener('scroll', () => {
@@ -1871,7 +1936,7 @@ function setupScrollBehavior() {
         else if(!document.getElementById('list-screen').classList.contains('hidden')) {
            stickyHeaderList.style.transform = `translate3d(0, ${offset}, 0)`;
         }
-        else if(!document.getElementById('history-screen').classList.contains('hidden')) { // ★追加
+        else if(!document.getElementById('history-screen').classList.contains('hidden')) { 
            stickyHeaderHistory.style.transform = `translate3d(0, ${offset}, 0)`;
         }
         
@@ -1883,7 +1948,6 @@ function setupScrollBehavior() {
   });
 }
 
-// Navigation
 function showScreen(id) {
   document.querySelectorAll('.modal-overlay').forEach(el => {
     el.classList.remove('active', 'hidden'); 
@@ -1914,7 +1978,6 @@ function speak(text) {
   }
 }
 
-// --- SEARCH & WORD BOOK ---
 let searchTimeout;
 function onSearchInput() {
   clearTimeout(searchTimeout);
@@ -2083,7 +2146,6 @@ function toggleWeak(id) {
   }
 }
 
-// --- WEAK LIST LOGIC ---
 function showList() {
   if(!weakIDs.length) return alert("現在、苦手単語はありません。");
   showScreen('list-screen');
@@ -2211,7 +2273,6 @@ function closeCourseModal(e) {
   }, 200);
 }
 
-// --- SORTED CONFUSING OPTIONS ---
 function showConfusingOptions() {
   document.getElementById('course-modal-title').innerText = "接頭辞で選ぶ";
   const container = document.getElementById('course-list');
@@ -2253,9 +2314,6 @@ function startWeakMode() {
   triggerQuizStart('weak', '苦手特訓', {});
 }
 
-// =========================================================
-// ▼▼▼ RESUME / COMMON START LOGIC ▼▼▼
-// =========================================================
 let pendingQuizCallback = null; 
 
 function triggerQuizStart(mode, label, params) {
@@ -2389,7 +2447,6 @@ function startQuizSequence(mode, label = null) {
   showQuestion();
 }
 
-// --- QUIZ LOGIC (FIXED) ---
 function prevQ() {
   if (currentIndex > 0) {
     currentIndex--;
@@ -2591,8 +2648,6 @@ function nextQ() {
   }
 }
 
-// --- BULK TEST LOGIC (OPTIMIZED) ---
-
 function renderBulkTest() {
   const con = document.getElementById('bulk-test-list');
   con.innerHTML = "";
@@ -2705,7 +2760,6 @@ function finishBulkTest() {
   document.getElementById('bulk-grade-btn').style.display = 'none';
   document.getElementById('bulk-home-btn').style.display = 'block';
 
-  // ★ここに追加：一括テストの履歴を保存
   saveHistory('50問一括テスト', score, currentQuestions.length, wrongAnswers);
 
   localStorage.removeItem(RESUME_KEY);
@@ -2716,7 +2770,6 @@ function showResult() {
   showScreen('result-screen');
   document.getElementById('final-score').innerText = `${score} / ${currentQuestions.length}`;
   
-  // ★ここに追加：通常テストの履歴を保存
   const label = currentQuestions._label || 'クイズ';
   saveHistory(label, score, currentQuestions.length, wrongAnswers);
 
@@ -2749,7 +2802,6 @@ function showResult() {
   }
 }
 
-// Init
 window.onload = init;
 </script>
 </body>
